@@ -36,6 +36,7 @@ always@(max_state) begin
     case(max_state)
         S_IDLE: begin
             next_max_state = S_IDLE;
+            max_output_valid_r = 0;
         end
         S0: begin
             max_1 = ($signed(s0) > $signed(s1)) ? s0 : s1;
@@ -49,23 +50,27 @@ always@(max_state) begin
             max_n_4 = ($signed(s6) > $signed(s7)) ? 4'b0110 : 4'b0111;
             max_n_5 = ($signed(s8) > $signed(s9)) ? 4'b1000 : 4'b1001;
             next_max_state = S1;
+            //$display("next_state: %d, max_1: %d, max_2: %d, max_3: %d, max_4: %d, max_5: %d, max_n_1: %d, max_n_2: %d, max_n_3: %d, max_n_4: %d, max_n_5: %d", next_max_state, max_1, max_2, max_3, max_4, max_5, max_n_1, max_n_2, max_n_3, max_n_4, max_n_5);
         end
         S1: begin
-                max_1 = ($signed(max_1) > $signed(max_2)) ? max_1 : max_2;
-                max_2 = ($signed(max_3) > $signed(max_4)) ? max_3 : max_4;
-                max_n_1 = ($signed(max_1) > $signed(max_2)) ? max_n_1 : max_n_2;
-                max_n_2 = ($signed(max_3) > $signed(max_4)) ? max_n_3 : max_n_4;
-                next_max_state = S2;
+            max_n_1 = ($signed(max_1) > $signed(max_2)) ? max_n_1 : max_n_2;
+            max_n_2 = ($signed(max_3) > $signed(max_4)) ? max_n_3 : max_n_4;
+            max_1 = ($signed(max_1) > $signed(max_2)) ? max_1 : max_2;
+            max_2 = ($signed(max_3) > $signed(max_4)) ? max_3 : max_4;
+            next_max_state = S2;
+            //$display("next_state: %d, max_1: %d, max_2: %d, max_n_1: %d, max_n_2: %d", next_max_state, max_1, max_2, max_n_1, max_n_2);
         end
         S2: begin
-                max_1 = ($signed(max_1) > $signed(max_2)) ? max_1 : max_2;
-                max_n_1 = ($signed(max_1) > $signed(max_2)) ? max_n_1 : max_n_2;
-                next_max_state = S3;
+            max_n_1 = ($signed(max_1) > $signed(max_2)) ? max_n_1 : max_n_2;
+            max_1 = ($signed(max_1) > $signed(max_2)) ? max_1 : max_2;
+            next_max_state = S3;
+            //$display("next_state: %d, max_1: %d, max_n_1: %d", next_max_state, max_1, max_n_1);
         end
         S3: begin
-                Img_Num_r = ($signed(max_1) > $signed(max_5)) ? max_n_1 : max_n_5;
-                max_output_valid_r = 1;
-                next_max_state = S_IDLE;
+            Img_Num_r = ($signed(max_1) > $signed(max_5)) ? max_n_1 : max_n_5;
+            max_output_valid_r = 1;
+            next_max_state = S_IDLE;
+            //$display("next_state: %d, Img_Num_r: %d", next_max_state, Img_Num_r);
         end
 
 
@@ -90,8 +95,10 @@ always@(posedge clk) begin
         Img_Num_r = 0;
 	end
     else begin
-        if(Input_Valid == 1)
+        if(Input_Valid == 1) begin
             max_state = S0;
+           // $display("hhhhhhhhhhhhhhhhhhhhhhhhhhh");
+        end
         else
             max_state = next_max_state;
     end

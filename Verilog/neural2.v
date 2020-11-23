@@ -69,7 +69,14 @@ always@(c_cycles) begin
 			f_result_r = output_a1;
 		end
 		801: begin
-			output_valid_r = 0;
+			output_valid_r <= 0;
+			wgt_m0 <= 0;
+			pixel_m0 <= 0;
+			output_m0_r <= 0;
+			output_a1_r <= 0;	
+			f_result_r <= 0;
+			start_input <= 0;
+			c_cycles <= 0;
 		end
 		default: begin
 			if(c_cycles < 786) begin   //7
@@ -96,11 +103,8 @@ always@(posedge clk) begin
 		if(Input_Valid)
 			start_input <= 1;
 		else begin
-			if(start_input == 1) begin
-				if(c_cycles < 1000)		
-					c_cycles <= c_cycles + 1;
-				else
-					c_cycles <= c_cycles;
+			if(start_input == 1) begin	
+				c_cycles <= c_cycles + 1;
 			end
 		end
 	end
