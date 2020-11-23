@@ -1,0 +1,117 @@
+
+//this module is to calculate one sum of the nerual network, there are totally 10 sum that we need to calculaute
+//the rest of 9 sum can use this module to calculate
+module neural (
+	input clk,
+	input rst,
+	input Input_Valid,
+	input [1000:0] wgt,
+	input [1000:0] pixel,
+	output [25:0] Out_result,
+	output Output_Valid
+);
+
+reg output_valid_r;
+
+wire [25:0] output_m0;  //the output result from the multiplier_0
+wire [25:0] output_m1;  //the output result from the multiplier_1
+
+wire [25:0] output_a0;  //the output from the first adder (adder_0);
+reg [25:0] output_a0_r;  //reg for output_a0, as the input of adder_1
+
+wire [25:0] output_a1;  //the output from the second adder (adder_1)
+reg [25:0] output_a1_r; //reg for output_a1, as the input of adder_1 (feedback loop)
+
+reg [18:0] wgt_m0;
+reg [18:0] wgt_m1;
+
+reg [9:0] pixel_m0;
+reg [9:0] pixel_m1;
+
+reg [8:0] c_r; //counter index for the weight and pixel inputs
+reg [8:0] c_cycles; //use to calculate how many cycles we need to get the result after data feeding
+
+reg [25:0] f_result_r;  //final result;
+reg [25:0] temp_1r;
+reg [25:0] temp_2r;
+
+FixedPointMultiplier multiplier_0 (clk, rst, wgt_m0, pixel_m0, output_m0);
+FixedPointMultiplier multiplier_1 (clk, rst, wgt_m1, pixel_m1, output_m1);
+
+FixedPointAdder adder_0 (clk, rst, output_m0, output_m1, output_a0);    //first adder
+
+FixedPointAdder adder_1 (clk, rst, output_a0_r, output_a1_r, output_a1);    //Second adder, feedback loop to calculate all the sum.
+ 
+assign Output_Valid = output_valid_r;
+assign Out_result = f_result_r;
+
+always@(c_cycles) begin
+	case(c_cycles)
+		0: begin
+			wgt_m0 <= 0;
+			wgt_m1 <= 0;
+			pixel_m0 <= 0;
+			pixel_m1 <= 0;
+			output_a0_r <= 0;
+			output_a1_r <= 0;	
+			f_result_r <= 0;
+		end
+		14: begin
+			temp_1r = output_a1;
+			output_a0_r = output_a0;
+			output_a1_r = output_a1;
+		end
+		15: begin
+			output_a0_r = temp_1r;
+			output_a1_r = output_a1;
+		end
+		16: begin
+			temp_2r = output_a1;
+			output_a0_r = output_a0;
+			output_a1_r = output_a1;
+		end
+		19: begin
+			output_a0_r = temp_2r;
+			output_a1_r = output_a1;
+		end
+		22: begin
+			output_valid_r = 1;
+			f_result_r = output_a1;
+		end
+		default: begin
+			if(c_cycles < 5) begin
+				wgt_m0 = wgt[19*(c_r-2)+:19];   //"c[x+ : N] x +: N, The start position of the vector is given by x and you count up from x by N."
+				wgt_m1 = wgt[19*(c_r-1)+:19];
+				pixel_m0 = pixel[10*(c_r-2)+:10];
+				pixel_m1 = pixel[10*(c_r-1)+:10];
+			end
+			else begin
+				wgt_m0 = 0;
+				wgt_m1 = 0;
+				pixel_m0 = 0;
+				pixel_m1 = 0;
+			end
+			output_a0_r = output_a0;
+			output_a1_r = output_a1;
+		end
+	endcase
+end
+
+always@(posedge clk) begin
+	if(rst) begin
+		c_r <= 0;
+		c_cycles <= 0;
+		output_valid_r <= 0;
+	end
+	else if(Input_Valid) begin
+
+		c_r <= c_r+2;   //counter starts 2,4,6,8,......
+		if(c_cycles < 23)  		
+			c_cycles <= c_cycles + 1;
+		else
+			c_cycles <= c_cycles;
+	end
+	$display("%d, output_m0=%d, output_m1=%d, a0=%d, a1=%d, a0_r=%d, a1_r=%d, temp_1r=%d, temp_2r=%d", c_cycles, output_m0, output_m1, output_a0, output_a1, output_a0_r, output_a1_r, temp_1r, temp_2r);
+end
+
+endmodule
