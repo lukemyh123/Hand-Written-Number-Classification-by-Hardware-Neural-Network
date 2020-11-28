@@ -79,28 +79,28 @@ end
 
 always@(posedge clk) begin
  	if(rst) begin
-        max_state = S_IDLE;
-        next_max_state = S_IDLE;
-        max_1 = 0;
-        max_2 = 0;
-        max_3 = 0;
-        max_4 = 0;
-        max_5 = 0;
-        max_n_1 = 0;
-        max_n_2 = 0;
-        max_n_3 = 0;
-        max_n_4 = 0;
-        max_n_5 = 0;
-        max_output_valid_r = 0;
-        Img_Num_r = 0;
+        max_state <= S_IDLE;
+        next_max_state <= S_IDLE;
+        max_1 <= 0;
+        max_2 <= 0;
+        max_3 <= 0;
+        max_4 <= 0;
+        max_5 <= 0;
+        max_n_1 <= 0;
+        max_n_2 <= 0;
+        max_n_3 <= 0;
+        max_n_4 <= 0;
+        max_n_5 <= 0;
+        max_output_valid_r <= 0;
+        Img_Num_r <= 0;
 	end
     else begin
         if(Input_Valid == 1) begin
-            max_state = S0;
+            max_state <= S0;
            // $display("hhhhhhhhhhhhhhhhhhhhhhhhhhh");
         end
         else
-            max_state = next_max_state;
+            max_state <= next_max_state;
     end
     //$display("rst:%d, max_state: %d, Input_Valid: %d, max_1: %d, max_2: %d, max_3: %d, max_4: %d, max_5: %d, max_n_5: %d, Img_Num_r: %d, output_valid: %d ", rst, max_state, Input_Valid, max_1, max_2, max_3, max_4, max_5, max_n_5, Img_Num_r, max_output_valid_r);
 

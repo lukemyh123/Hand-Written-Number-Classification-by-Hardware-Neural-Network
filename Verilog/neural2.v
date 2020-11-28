@@ -40,11 +40,11 @@ assign Out_result = f_result_r;
 always@(c_cycles) begin
 	case(c_cycles)
 		0: begin
-			wgt_m0 <= 0;
-			pixel_m0 <= 0;
-			output_m0_r <= 0;
-			output_a1_r <= 0;	
-			f_result_r <= 0;
+			wgt_m0 = 0;
+			pixel_m0 = 0;
+			output_m0_r = 0;
+			output_a1_r = 0;	
+			f_result_r = 0;
 		end
 		793: begin  //14
 			temp_1r = output_a1;
@@ -69,14 +69,14 @@ always@(c_cycles) begin
 			f_result_r = output_a1;
 		end
 		801: begin
-			output_valid_r <= 0;
-			wgt_m0 <= 0;
-			pixel_m0 <= 0;
-			output_m0_r <= 0;
-			output_a1_r <= 0;	
-			f_result_r <= 0;
-			start_input <= 0;
-			c_cycles <= 0;
+			output_valid_r = 0;
+			wgt_m0 = 0;
+			pixel_m0 = 0;
+			output_m0_r = 0;
+			output_a1_r = 0;	
+			f_result_r = 0;
+			start_input = 0;
+			c_cycles = 0;
 		end
 		default: begin
 			if(c_cycles < 786) begin   //7
