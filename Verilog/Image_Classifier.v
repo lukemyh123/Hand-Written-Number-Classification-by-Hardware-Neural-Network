@@ -8639,7 +8639,8 @@ module Image_Classifier (
  input [9:0] Pix_784, // sfix10_En0 
  output [3:0] Image_Number, // sfix26_En18 
  output Output_Valid
- /*output [25:0] out_0,
+ /*
+ output [25:0] out_0,
  output [25:0] out_1,
  output [25:0] out_2,
  output [25:0] out_3,
@@ -8648,7 +8649,9 @@ module Image_Classifier (
  output [25:0] out_6,
  output [25:0] out_7,
  output [25:0] out_8,
- output [25:0] out_9*/
+ output [25:0] out_9,
+ output Output_Valid0
+ */
  );
 
 reg [7849:0] pixel;
@@ -8670,7 +8673,8 @@ wire [14914:0] wgt_9 = {Wgt_9_784,Wgt_9_783,Wgt_9_782,Wgt_9_781,Wgt_9_780,Wgt_9_
 
 wire [25:0] out_0, out_1, out_2, out_3, out_4, out_5, out_6, out_7, out_8, out_9;
 
-wire Output_valid0, Output_valid1, Output_valid2, Output_valid3, Output_valid4, Output_valid5, Output_valid6, Output_valid7, Output_valid8, Output_valid9;
+wire Output_Valid0, Output_Valid1, Output_Valid2, Output_Valid3, Output_Valid4, Output_Valid5, Output_Valid6, Output_Valid7, Output_Valid8, Output_Valid9;
+//wire Output_Valid1, Output_Valid2, Output_Valid3, Output_Valid4, Output_Valid5, Output_Valid6, Output_Valid7, Output_Valid8, Output_Valid9;
 
 neural2 n0( .clk(clk), .rst (~GlobalReset), .Input_Valid (Input_Valid), .wgt (wgt_0), .pixel (pixel_w), .Out_result (out_0), .Output_Valid (Output_Valid0));
 neural2 n1( .clk(clk), .rst (~GlobalReset), .Input_Valid (Input_Valid), .wgt (wgt_1), .pixel (pixel_w), .Out_result (out_1), .Output_Valid (Output_Valid1));
